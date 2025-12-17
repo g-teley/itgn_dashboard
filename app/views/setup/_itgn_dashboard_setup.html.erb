@@ -1,0 +1,6 @@
+<b>ITGN Dashboard Settings Page</b>
+<%- defaults = Redmine::Plugin::registered_plugins[:itgn_dashboard].settings[:default] -%>
+<p>
+  <label><%= l(:label_settings_title) %>:</label>
+  <%= text_field_tag("settings[title]", @settings["title"] || defaults["ITGN Dashboard"]) %>
+</p>

@@ -1,0 +1,261 @@
+<h2><%= Setting.plugin_itgn_dashboard['title'] %> </h2>
+<div class="container">
+</div>
+<% content_for :header_tags do %>
+  <%= 
+    javascript_include_tag "https://www.gstatic.com/charts/loader.js"
+  %>
+  <%= javascript_include_tag "chartkick.js", :plugin => 'itgn_dashboard' %>
+<% end %>
+<style type="text/css">
+    .table {}
+    .tr:hoover {background:lightblue;}
+    .td {}
+    .charts {
+        table-layout: fixed;
+        width: 100%;
+        white-space: nowrap;
+    }
+    .charts td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipses;
+    }
+    .button-left {
+        position: absolute;
+        left: 8px;
+    }
+    .button-right {
+        position: absolute;
+        right: 8px;
+    }
+    .my-class {
+        width: 20em;
+        border: 2px solid #0000A0;
+    }
+</style>
+<% if User.current.admin? %>
+<p id="title" class="my-class"><%=I18n.t("label_show_for")%> : <%= select_configured_users(@user_id) %></p>
+<%end%>
+<table class="charts">
+    <thead>
+        <tr>
+            <th><%= @settingsR1.enabled === 1 ? I18n.t("label_graphic1"):'' %></th>
+            <th><%= @settingsR2.enabled === 1 ? I18n.t("label_graphic2"):'' %></th>
+            <th><%= @settingsR3.enabled === 1 ? I18n.t("label_graphic3"):'' %></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id="chart1">
+                <%= if @settingsR1.enabled === 1
+                  datasource = "/itgn_dashboard/data/report1?user_id=#{@user_id}"
+                  # ==> If selected 'scaled' color series, calculate the number of series and the color_scheme
+                  opts = get_opts(@settingsR1)
+                  case @settingsR1.chart_type
+                    when 'line'
+                    line_chart datasource, :discrete => true, :library => opts
+                    when 'bar'
+                    bar_chart datasource, :library => opts
+                    when 'pie'
+                    pie_chart datasource, :library => opts
+                    when 'area'
+                    area_chart datasource, :library => opts
+                    when 'column'
+                    column_chart datasource, :library => opts
+                    else
+                    "<b>No chart type specified</b>"
+                  end
+                  end %>
+            </td>
+            <td id="chart2">
+                <%= if @settingsR2.enabled === 1
+                  datasource = "/itgn_dashboard/data/report2?user_id=#{@user_id}"
+                  opts = get_opts(@settingsR2)
+                  case @settingsR2.chart_type
+                    when 'line'
+                    line_chart datasource, discrete: true, :library => opts
+                    when 'bar'
+                    bar_chart datasource, :library => opts
+                    when 'pie'
+                    pie_chart datasource, :library => opts
+                    when 'area'
+                    area_chart datasource, :library => opts
+                    when 'column'
+                    column_chart datasource, :library => opts
+                    else
+                    "<b>No chart type specified</b>"
+                  end
+                  end %>
+            </td>
+            <td id="chart3">
+                <%= if @settingsR3.enabled === 1
+                  datasource = "/itgn_dashboard/data/report3?user_id=#{@user_id}"
+                  opts = get_opts(@settingsR3)
+                  case @settingsR3.chart_type
+                    when 'line'
+                    line_chart datasource, discrete: true, :library => opts
+                    when 'bar'
+                    bar_chart datasource, :library => opts
+                    when 'pie'
+                    pie_chart datasource, :library => opts
+                    when 'area'
+                    area_chart datasource, :library => opts
+                    when 'column'
+                    column_chart datasource, :library => opts
+                    else
+                    "<b>No chart type specified</b>"
+                  end
+                  end %>
+            </td>
+        </tr>
+        <tr>
+            <th><%= @settingsR4.enabled === 1 ? I18n.t("label_graphic4"):'' %></th>
+            <th><%= @settingsR5.enabled === 1 ? I18n.t("label_graphic5"):'' %></th>
+            <th><%= @settingsR6.enabled === 1 ? I18n.t("label_graphic6"):'' %></th>
+        </tr>
+        <tr>
+            <td id="chart4">
+                <%=  if @settingsR4.enabled === 1
+                  datasource = "/itgn_dashboard/data/report4?user_id=#{@user_id}"
+                  opts = get_opts(@settingsR4)
+                  case @settingsR4.chart_type
+                    when 'line'
+                    line_chart datasource, :discrete => true, :library => opts
+                    when 'bar'
+                    bar_chart datasource, :library => opts
+                    when 'pie'
+                    pie_chart datasource, :library => opts
+                    when 'area'
+                    area_chart datasource, :library => opts
+                    when 'column'
+                    column_chart datasource, :library => opts
+                    else
+                    "<b>No chart type specified</b>"
+                  end
+                  end %>
+            </td>
+            <td id="chart5">
+                <%= if @settingsR5.enabled === 1
+                  datasource = "/itgn_dashboard/data/report5?user_id=#{@user_id}"
+                  opts = get_opts(@settingsR5)
+                  case @settingsR5.chart_type
+                    when 'line'
+                    @r5_html = line_chart datasource, :discrete => true, :library => opts
+                    when 'bar'
+                    bar_chart datasource, :library => opts
+                    when 'pie'
+                    pie_chart datasource, :library => opts
+                    when 'area'
+                    area_chart datasource, :library => opts
+                    when 'column'
+                    column_chart datasource, :library => opts
+                    else
+                    "<b>No chart type specified</b>"
+                  end
+                  end %>
+            </td>
+            <td id="chart6">
+                <%= if @settingsR6.enabled === 1
+                  datasource = "/itgn_dashboard/data/report6?user_id=#{@user_id}"
+                  opts = get_opts(@settingsR6)
+                  case @settingsR6.chart_type
+                    when 'line'
+                    line_chart datasource, discrete: true, :library => opts
+                    when 'bar'
+                    bar_chart datasource, :library => opts
+                    when 'pie'
+                    pie_chart datasource, :library => opts
+                    when 'area'
+                    area_chart datasource, :library => opts
+                    when 'column'
+                    column_chart datasource, :library => opts
+                    else
+                    "<b>No chart type specified</b>"
+                  end
+                  end %>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div id="dialog" title="" style="display: none">
+    <div id="chart-7" style="height: 480px; text-align: center; color: #999; font-size: 14px; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Arial, Helvetica, sans-serif;">Loading...</div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function () {
+
+    // get color table
+    function intToHex(i) {
+        var hex = parseInt(i).toString(16);
+        return (hex.length < 2) ? "0" + hex : hex;
+    }
+    /*
+    for (r=0xff;r>0;r-=64) {
+      for (b=0; b<0xff;b+=64) {
+        for (g=0;g<0xff;g+=64) {
+         console.log("#" + intToHex(r) + intToHex(g) + intToHex(b));
+        }
+      }
+    }
+    */
+      // Zoom in on double clicked chart
+      $("td").dblclick(function () {
+          // get script part from current chart
+          var script = $("script", this).html().replace(/chart\-\d+/, "chart-7");
+          html = '<div class="ui-dialog-content ui-widget-content" id="chart">';
+          html += '<div id="chart-7" style="height: auto; text-align: center; color: #999; line-height: 0px; font-size: 14px; font-family: \'Lucida Grande\', \'Lucida Sans Unicode\', Verdana, Arial, Helvetica, sans-serif;">Loading...</div>';
+          html += '<script type="text/javascript">';
+          html += script;
+          html += '\</script\></div\>';
+          $("#chart-7").html(html);
+          showDialog("Full Chart Size");
+      });
+      function showDialog(chart_title) {
+          $("#dialog").dialog({
+              resizable: false,
+              title: chart_title,
+              modal: true,
+              width: $(window).width(),
+              height: 'auto',
+              bgiframe: false,
+              style: "line-height: 0px",
+              hide: {effect: 'scale', duration: 400},
+              buttons: [
+                  {
+                      text: '<%= I18n.t("button_text_close")%>',
+                      "class": "color:blue",
+                      click: function () {
+                          $("#dialog").dialog('close');
+                          return true;
+                      }
+                  }, {
+                      text: '<%= I18n.t("button_export") %>',
+                      "class": "button-left",
+                      click: function (e) {
+                          var table = "<table>" + $('table', this).html() + "</table>";
+                          window.open('data:application/vnd.ms-excel,' + table);
+                          e.preventDefault();
+                      }
+                  }
+              ]
+          }).show();
+      }
+      <%if User.current.admin?%>
+      // Position element next to title and handle change
+      $(".my-class").position({
+          my:  "left top",
+          at:  "right top",
+          of:  $("h2"),
+          collision: "flipfit"
+      });
+      $("select").change(function () {
+         switch (this.id) {
+          case "user_id" : // Get data for new selected user_id for each report
+              window.location.href = '/itgn_dashboard' + "?user_id=" + this.value;
+              break;
+          }
+        });
+      <%end%>
+  });
+
+</script>

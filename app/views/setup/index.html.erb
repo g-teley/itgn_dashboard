@@ -1,0 +1,225 @@
+<style type="text/css">
+    .table {
+        table-layout: fixed;
+    }
+    .tr:hoover {background:lightblue;}
+    .td {}
+    .charts {
+        table-layout: fixed;
+        width: 100%;
+        white-space: nowrap;
+    }
+    .charts tr td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipses;
+        vertical-align: top;
+    }
+    label {
+        display: inline-block;
+        width: 12em;
+        margin-left: 0px;
+    }
+    .inline-label {
+        display: inline-block;
+        width:  5em;
+        text-align: right;
+        vertical-align: top;
+    }
+    p.large_label {
+        font-size: 16px;
+        font-weight: bold;
+        width: 40em;
+        float: left;
+    }
+    div.message {
+        font-weight: bold;
+        color: yellow;
+        display: inline-block;
+    }
+    .button-right {
+        position: absolute;
+        right: 8px;
+    }
+    .ui-tabs .ui-tabs-panel{
+        padding: 2px 2px;
+    }
+</style>
+<p id="title" class="large_label"><%=I18n.t("label_setup")%> : <%= select_users(@user_id) %></p>
+<table class="charts">
+    <tbody>
+        <tr>
+            <td>
+                <%= std_tab(1,@settingsR1) %>
+            </td>
+            <td>
+                <%= std_tab(2,@settingsR2) %>
+            </td>
+            <td>
+                <%= std_tab(3,@settingsR3) %>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <%= std_tab(4,@settingsR4) %>
+            </td>
+            <td>
+                <%= std_tab(5,@settingsR5) %>
+            </td>
+            <td>
+                <%= std_tab(6,@settingsR6) %>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<%= javascript_tag do %>
+  window.stdReportTitles = [
+  ['<%= j I18n.t("std_report1_chart_title") %>','<%= j I18n.t("std_report1_x_title") %>','<%= j I18n.t("std_report1_y_title") %>'],
+  ['<%= j I18n.t("std_report2_chart_title") %>','<%= j I18n.t("std_report2_x_title") %>','<%= j I18n.t("std_report2_y_title") %>'],
+  ['<%= j I18n.t("std_report3_chart_title") %>','<%= j I18n.t("std_report3_x_title") %>','<%= j I18n.t("std_report3_y_title") %>'],
+  ['<%= j I18n.t("std_report4_chart_title") %>','<%= j I18n.t("std_report4_x_title") %>','<%= j I18n.t("std_report4_y_title") %>'],
+  ['<%= j I18n.t("std_report5_chart_title") %>','<%= j I18n.t("std_report5_x_title") %>','<%= j I18n.t("std_report5_y_title") %>'],
+  ['<%= j I18n.t("std_report6_chart_title") %>','<%= j I18n.t("std_report6_x_title") %>','<%= j I18n.t("std_report6_y_title") %>'],
+  ['<%= j I18n.t("std_report7_chart_title") %>','<%= j I18n.t("std_report7_x_title") %>','<%= j I18n.t("std_report7_y_title") %>'],
+  ['<%= j I18n.t("std_report8_chart_title") %>','<%= j I18n.t("std_report8_x_title") %>','<%= j I18n.t("std_report8_y_title") %>'],
+  ['<%= j I18n.t("std_report9_chart_title") %>','<%= j I18n.t("std_report9_x_title") %>','<%= j I18n.t("std_report9_y_title") %>'],
+  ['<%= j I18n.t("std_report10_chart_title") %>','<%= j I18n.t("std_report10_x_title") %>','<%= j I18n.t("std_report10_y_title") %>'],
+  ['<%= j I18n.t("std_report11_chart_title") %>','<%= j I18n.t("std_report11_x_title") %>','<%= j I18n.t("std_report11_y_title") %>']
+  ];
+  window.stdChartTypes = <%= raw @chart_types %>
+  window.color_schemes = <%= raw @color_schemes.to_json %>
+<% end %>
+<%= javascript_include_tag "validate.js", :plugin => 'itgn_dashboard' %>
+<script type="text/javascript">
+
+  function color_bar(table, cs) {
+      var $i = 0;
+      try {
+        $csl = 0;
+        $.each(color_schemes[cs],function(index,value) {
+          $csl++;
+        });
+        //console.log("CS : " + cs + ", length = " + $csl);
+        //$.each(color_schemes[cs],function(index,value) {
+        //  console.log("Index = " + index + ", value = " + value['color']);
+        //});
+        var bcol = $(table).parent().css('background-color');
+        // Reset table
+        $(table).find('td').each(function () {
+              //console.debug(color_schemes[cs][$i]['color'])
+              if ((cs == 0) || ($csl <= $i)) { // Default colors
+                $(this).css({
+                  'width': '0em',
+                  'height': '0em',
+                  'background-color': bcol
+                });
+              } else {
+                col = color_schemes[cs][$i]['color'];
+                $(this).css({
+                    'width': '1em',
+                    'height': '1em',
+                    'background-color': col
+                });
+              }
+              ++$i;
+          });
+      } catch (err) {
+          console.log("errored out of color_bar() with $i = " + $i);
+      }
+  };
+
+  $(document).ready(function () {
+      // Initialize tabs
+      $("form").filter(function () {
+          return this.id.match(/form\d+/);
+      }).each(function () {
+          $(this).children().filter(function () {
+              return this.id.match(/tabs\d+/);
+          }).each(function () {
+              $(this).tabs({heightStyle: "auto"});
+          });
+      });
+      // Set text field width (can only after tabs are initialized)
+      $("form").filter(function () {
+          return this.id.match(/form\d+/);
+      }).find('input[type=text]').css({
+          'width': '65%',
+          'color': 'green'
+      });
+      $("form").filter(function () {
+          return this.id.match(/form\d+/);
+      }).find('select').css({
+          'width': '65%'
+      });
+      // Color bar
+      $("form").filter(function () {
+          return this.id.match(/form\d+/);
+      }).each(function () {
+          $(this).children().filter(function () {
+              return this.id.match(/tabs\d+/);
+          }).each(function () {
+              $(this).children().filter(function () {
+                  return this.id.match(/tab\-2/);
+              }).each(function () {
+                  ct = $(this).find('table[id=color_table]');
+                  $(this).children().filter(function () {
+                      return this.id.match(/color_scheme/);
+                  }).each(function () {
+                      color_bar(ct, this.value);
+                  });
+              });
+          });
+      });
+
+      $('form').bind('ajax:complete', function (evt, xhr, status) {
+          var status_text = JSON.parse(xhr.responseText);
+          var $rm = $(this).find('div[id=result_message]');
+          if (status === 'success') {
+              $rm.css({'font-weight': 'bold',
+                  'color': 'green',
+                  'display': 'inline-block'
+              });
+          } else {
+              $rm.css({'font-weight': 'bold',
+                  'color': 'red',
+                  'display': 'inline-block'
+              });
+          }
+          $rm.text(status_text.message)
+                  .show()
+                  .delay(5000)
+                  .fadeOut();
+      });
+      // Set some decent defaults for selected report
+      $("select").change(function () {
+          switch (this.id) {
+              case "user_id" : // Get data for new selected user_id for each report
+                  window.location.href = '/itgn_dashboard_setup' + "?user_id=" + this.value;
+                  break;
+              case "std_report_id" : // Set default values per report
+                  var report = this.value - 1; // zero-based
+                  if (report > 8) { // Charts with selectable custom field
+                      this.form.chart_title.value = $("#custom_field option:selected").text();
+                  } else {
+                      this.form.chart_title.value = stdReportTitles[report][0];
+                  }
+                  this.form.x_title.value = stdReportTitles[report][1];
+                  this.form.y_title.value = stdReportTitles[report][2];
+                  this.form.chart_type.value = stdChartTypes[report];
+                  break;
+              case "custom_field" :
+                  if (this.form.std_report_id.value > 8) {
+                      this.form.chart_title.value = this.form.custom_field[this.form.custom_field.selectedIndex].innerHTML;
+                  }
+                  break;
+              case "color_scheme" :
+                  cs = this.form.color_scheme.value;
+                  this.form.series.value = JSON.stringify(color_schemes[cs]);
+                  var table = $(this).parent().find('table[id=color_table]');
+                  color_bar(table, cs);
+                  break;
+              default:
+          }
+      });
+  });
+</script>
